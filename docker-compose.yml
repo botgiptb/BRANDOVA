@@ -1,0 +1,27 @@
+services:
+  brandova:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: brandova:latest
+    container_name: brandova-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-brandova-admin}
+      - ADMIN_SECRET=${ADMIN_SECRET:-brandova-dev-secret-change-me}
+    volumes:
+      # Persistent JSON data store (analytics, page views, tickets)
+      - brandova_data:/app/data
+      # Persistent uploaded work images
+      - brandova_workimages:/app/public/workimage
+
+volumes:
+  brandova_data:
+    driver: local
+  brandova_workimages:
+    driver: local
